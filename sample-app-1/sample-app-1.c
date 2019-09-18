@@ -151,65 +151,65 @@ static int get_ets(int fd, int index)
 	struct ptp_extts_request req;
 
 	/* Init the server. */
-	UA_ServerNetworkLayer nl = UA_ServerNetworkLayerTCP(UA_ConnectionConfig_default,
-							    DEFAULT_OPC_UA_PORT, NULL);
-	UA_ServerConfig *config = UA_ServerConfig_new_default();
+	// UA_ServerNetworkLayer nl = UA_ServerNetworkLayerTCP(UA_ConnectionConfig_default,
+	// 						    DEFAULT_OPC_UA_PORT, NULL);
+	// UA_ServerConfig *config = UA_ServerConfig_new_default();
 
-	config->networkLayers = &nl;
-	config->networkLayersSize = 1;
-	UA_Server *server = UA_Server_new(config);
+	// config->networkLayers = &nl;
+	// config->networkLayersSize = 1;
+	// UA_Server *server = UA_Server_new(config);
 
-	/* Add a variable datasource node. */
-	/* 1) Set the variable attributes. */
-	UA_VariableAttributes attr = UA_VariableAttributes_default;
+	// /* Add a variable datasource node. */
+	// /* 1) Set the variable attributes. */
+	// UA_VariableAttributes attr = UA_VariableAttributes_default;
 
-	attr.displayName = UA_LOCALIZEDTEXT("en_US", "Time stamp datasource");
-	attr.accessLevel = UA_ACCESSLEVELMASK_READ | UA_ACCESSLEVELMASK_WRITE;
+	// attr.displayName = UA_LOCALIZEDTEXT("en_US", "Time stamp datasource");
+	// attr.accessLevel = UA_ACCESSLEVELMASK_READ | UA_ACCESSLEVELMASK_WRITE;
 
 	/* 2) Define where the variable shall be added with which browse name */
-	UA_NodeId new_node_id = UA_NODEID_STRING(1, "time-stamp-datasource");
-	UA_NodeId parent_node_id = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
-	UA_NodeId parent_ref_node_id = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	UA_NodeId variable_type = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE);
-	UA_QualifiedName browse_name = UA_QUALIFIEDNAME(1, "Time stamp datasource");
+	// UA_NodeId new_node_id = UA_NODEID_STRING(1, "time-stamp-datasource");
+	// UA_NodeId parent_node_id = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
+	// UA_NodeId parent_ref_node_id = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	// UA_NodeId variable_type = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE);
+	// UA_QualifiedName browse_name = UA_QUALIFIEDNAME(1, "Time stamp datasource");
 
-	UA_DataSource data_source;
+	// UA_DataSource data_source;
 
-	data_source.read = read_ets;
-	data_source.write = write_ets;
+	//data_source.read = read_ets;
+	//data_source.write = write_ets;
 
 	/* 3) Add the variable with data source. */
-	UA_Server_addDataSourceVariableNode(server, new_node_id,
-					    parent_node_id,
-					    parent_ref_node_id,
-					    browse_name,
-					    variable_type, attr,
-					    data_source,
-					    NULL, NULL);
+	// UA_Server_addDataSourceVariableNode(server, new_node_id,
+	// 				    parent_node_id,
+	// 				    parent_ref_node_id,
+	// 				    browse_name,
+	// 				    variable_type, attr,
+	// 				    data_source,
+	// 				    NULL, NULL);
 
 	memset(&req, 0, sizeof(req));
 	req.index = index;
 	req.flags = PTP_ENABLE_FEATURE;
 	if (ioctl(fd, PTP_EXTTS_REQUEST, &req)) {
 		perror("PTP_EXTTS_REQUEST enable");
-		UA_Server_delete(server);
-		nl.deleteMembers(&nl);
+		// UA_Server_delete(server);
+		// nl.deleteMembers(&nl);
 		return -1;
 	}
 
 	/* Run the server loop. */
-	UA_Server_run(server, &running);
+	//UA_Server_run(server, &running);
 
 	/* Disable the external time stamp feature. */
 	req.flags = 0;
 	if (ioctl(fd, PTP_EXTTS_REQUEST, &req)) {
 		perror("PTP_EXTTS_REQUEST disable");
-		UA_Server_delete(server);
-		nl.deleteMembers(&nl);
+		//UA_Server_delete(server);
+		//nl.deleteMembers(&nl);
 		return -1;
 	}
-	UA_Server_delete(server);
-	nl.deleteMembers(&nl);
+	//UA_Server_delete(server);
+	//nl.deleteMembers(&nl);
 
 	return 0;
 }
@@ -401,14 +401,14 @@ int main(int argc, char *argv[])
 	LOG("Hello from %s!\n", prog_name);
 
 	/* Get daemon_cl process ID */
-	daemon_pid = get_proc_pid(daemon);
-	LOG("gPTP daemon: %s\nPID: %d\n", daemon, daemon_pid);
-	if (daemon_pid == -1) {
-		/* Just print warning but still let the program continue. */
-		fprintf(stderr,
-			"%s is not running!\nThere is no time sync.\n",
-			daemon);
-	}
+	// daemon_pid = get_proc_pid(daemon);
+	// LOG("gPTP daemon: %s\nPID: %d\n", daemon, daemon_pid);
+	// if (daemon_pid == -1) {
+	// 	 //Just print warning but still let the program continue.
+	// 	fprintf(stderr,
+	// 		"%s is not running!\nThere is no time sync.\n",
+	// 		daemon);
+	// }
 
 	/* Open ptp clock */
 	fd = open(ptp_dev, O_RDWR);
